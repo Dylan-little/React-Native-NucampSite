@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { Text, View, ScrollView, FlatList,
+     Modal, Button, StyleSheet,
+    Alert, PanResponder } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { postComment } from '../redux/ActionCreators';
 import { Rating, Input } from 'react-native-elements';
@@ -29,6 +31,8 @@ function RenderCampsite(props) {
 
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
 
+    const recognizeComment = ({dx}) => (dx < 200) ? true : false;
+
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderGrant: () => {
@@ -37,10 +41,10 @@ function RenderCampsite(props) {
         },
         onPanResponderEnd: (e, gestureState) => {
             console.log('pan responder end', gestureState);
-            if (recognizeDrag(gestureState)) {
+            if (recognizeDrag, recognizeComment(gestureState)) {
                 Alert.alert(
                     'Add Favorite',
-                    'Are you sure you wish to add ' + campsite.name + ' to favorites?',
+                    'are you sure you wish to add' + campsite.name + ' to favorite',
                     [
                         {
                             text: 'Cancel',
@@ -56,18 +60,23 @@ function RenderCampsite(props) {
                     { cancelable: false }
                 );
             }
+
+            else if (recognizeComment) {
+                return props.onShowModal();
+            }
+
             return true;
         }
-    });
+    })
 
     if (campsite) {
         return (
-            <Animatable.View
-                animation='fadeInDown'
-                duration={2000}
-                delay={1000}
-                ref={view}
-                {...panResponder.panHandlers}>
+            <Animatable.View 
+            animation='fadeInDown' 
+            duration={2000} 
+            delay={1000}
+            ref={view}
+            {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
                     image={{uri: baseUrl + campsite.image}}
@@ -148,7 +157,7 @@ class CampsiteInfo extends Component {
 
     handleComment(campsiteId) {
         this.props.postComment(campsiteId, this.state.rating, this.state.author, this.state.text);
-        console.log(JSON.stringify(this.state));
+        // console.log(JSON.stringify(this.state));
         this.toggleModal();
     }
     
